@@ -8,14 +8,14 @@ Digit = [0-9]
 NonZeroDigit = [1-9]
 Sign = [\+\-]
 
-OpCode = [A-Za-z]+
+OpCode = [A-Z]+
 Value = (0|{Sign}?{NonZeroDigit}{Digit}*)
 Label = {Identifier}:
 
 Rules.
 
 {Whitespace}        : skip_token.
-{Terminator}        : {token, {'\n',  TokenLine}}.
+{Terminator}        : {token, {'\n', TokenLine}}.
 ,                   : {token, {',',  TokenLine}}.
 \&                  : {token, {'&',  TokenLine}}.
 \[                  : {token, {'[',  TokenLine}}.

@@ -41,6 +41,7 @@ operation -> opcode identifer       : {'$1', '$2'}.
 operation -> opcode                 : {'$1'}.
 
 identifer -> atom   : unwrap('$1').
+
 value -> int        : unwrap('$1').
 value -> regValue   : '$1'.
 value -> address    : '$1'.
@@ -52,6 +53,7 @@ regValue -> '[' int ']'       : {'register', unwrap('$2')}.
 address ->  '&' int            : {'address', unwrap('$2')}.
 regAddress -> '&' '[' int ']' : {'address_in_register', unwrap('$3')}.
 
-Erlang code.
 
+
+Erlang code.
 unwrap({_Token, _Line, Value}) -> Value.
