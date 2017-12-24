@@ -10,7 +10,6 @@ Sign = [\+\-]
 
 OpCode = [A-Z]+
 Value = (0|{Sign}?{NonZeroDigit}{Digit}*)
-Label = {Identifier}:
 
 Rules.
 
