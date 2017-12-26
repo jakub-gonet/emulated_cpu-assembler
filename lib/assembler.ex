@@ -1,125 +1,125 @@
 defmodule Assembler do
-  @moduledoc """
-    Assembler is used to assembly .ecpu files into compiled form for
-    Emulated CPU.
-
-    EBN form for this language is like following:
-
-    letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
-       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
-       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
-       | "V" | "W" | "X" | "Y" | "Z" | "a" | "b"
-       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
-       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
-       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
-       | "x" | "y" | "z" | "0" | "1" | "2" | "3"
-       | "4" | "5" | "6" | "7" | "8" | "9" | "@"
-       | "#" | "!" | "_";
-
-    digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-    whitespace = "\ " | "\t" | "\n";
-
-    program = {assigment},{command},"HLT";
-
-    command = opcode, whitespace,
-            [(register | address | address in register),[ ",",
-            (register | address | address in register | const)]]
-    assigment = identifier, "<=", number, whitespace;
-    identifier = letter, {letter | digit};
-    label = identifier, ":", whitespace;
-    number = ["-"], digit, {digit};
-
-
-    where:
-    definition	=
-    concatenation	,
-    termination	;
-    alternation	|
-    optional	[ ... ]
-    repetition	{ ... }
-    grouping	( ... )
-    terminal string	" ... "
-    terminal string	' ... '
-    comment	(* ... *)
-    special sequence	? ... ?
-    exception	-
-  """
-
-@opcodes %{
-  NOP:    %{number: 0,  required_args: 0},
-  HLT:    %{number: 1,  required_args: 0},
-  MOV:    %{number: 2,  required_args: 2},
-  JMP:    %{number: 3,  required_args: 1},
-  JE:     %{number: 4,  required_args: 1},
-  JNE:    %{number: 5,  required_args: 1},
-  JL:     %{number: 6,  required_args: 1},
-  JLE:    %{number: 7,  required_args: 1},
-  JG:     %{number: 8,  required_args: 1},
-  JGE:    %{number: 9,  required_args: 1},
-  INC:    %{number: 10, required_args: 1},
-  DEC:    %{number: 11, required_args: 1},
-  ADD:    %{number: 12, required_args: 2},
-  SUB:    %{number: 13, required_args: 2},
-  MUL:    %{number: 14, required_args: 2},
-  DIV:    %{number: 15, required_args: 2},
-  AND:    %{number: 16, required_args: 2},
-  OR:     %{number: 17, required_args: 2},
-  XOR:    %{number: 18, required_args: 2},
-  NOT:    %{number: 19, required_args: 1},
-  RSHFT:  %{number: 20, required_args: 2},
-  LSHFT:  %{number: 21, required_args: 2},
-  CMP:    %{number: 22, required_args: 2}
-}
-
-@addressing_modes %{
-  CONST            => 0,
-  REG              => 1,
-  ADDR             => 2,
-  ADDR_IN_REGISTER => 3
-}
-
-@doc """
-Gets opcode details from lookup table.
-
-Returns tuple: {:ok, <opcode tuple>} or :error}
+require Logger
+@moduledoc """
+  Assembler is used to assembly .ecpu files into compiled form for
+  Emulated CPU.
 """
-def get_opcode(opcode) do
-   Map.fetch(@opcodes, opcode)
+def assembly(code, output \\[])
+def assembly([], output) do
+  if output === [] do
+    Logger.warn(fn -> "Code seems to be empty" end)
+  end
+  output
+end
+def assembly(code, output) do
+  indentifiers = save_all_identifiers(code)
+  assembly_operations(code)
+  replace_all_identifiers(code, indentifiers)
 end
 
-@doc """
-Gets required arguments number from given opcode
-
-Returns required arguments number or :error with message
-"""
-def get_required_arguments(:error), do:
-  error_opcode_doesnt_exist()
-def get_required_arguments({:ok, opcode_tuple}), do:
-  {:ok, opcode_tuple.required_args}
-
-@doc """
-Gets opcode number from given opcode
-
-Returns opcode number or :error with message
-"""
-def get_opcode_number(:error), do:
-  error_opcode_doesnt_exist()
-def get_opcode_number({:ok, opcode_tuple}) do
-  {:ok, opcode_tuple.number}
+def assembly_operations(code, assembled_code \\ [])
+def assembly_operations([], assembled_code) do
+  assembled_code
+end
+def assembly_operations([%{operation: current_operation} | rest_of_code], assembled_code) do
+  [opcode | args] = current_operation
+  with :ok <- opcode_exists?(opcode),
+       :ok <- valid_args_number?(current_operation),
+       opcode_addr_modes_number = current_operation
+                                   |> operation_to_numbers_list
+                                   |> create_opcode_number,
+       args_values = get_args_value_list(args)
+    do
+      assembly_operations(rest_of_code, assembled_code ++ [opcode_addr_modes_number | args_values])
+    else
+      {:error, :bad_args_number} -> Logger.error(fn -> "Wrong arguments number for opcode #{opcode}" end)
+      {:error, :opcode_doesnt_exist} -> Logger.error(fn -> "Opcode #{opcode} doesn't exist" end)
+    end
+end
+def assembly_operations(rest_of_code, assembled_code) do
+  assembly_operations(rest_of_code, assembled_code)
 end
 
-@doc """
-Gets addressing mode number
+def replace_all_identifiers(code, indentifiers) do
 
-Returns addressing mode number or :error with message
-"""
-def get_addressing_mode_number(addressing_mode) do
-  Map.fetch(@addressing_modes, addressing_mode)
 end
 
-def error_opcode_doesnt_exist() do
-  IO.puts("That opcode does not exist")
-  :error
+def save_all_identifiers(code, identifiers \\ %{})
+def save_all_identifiers([], identifiers) do
+  identifiers
+end
+def save_all_identifiers([%{label: value} | rest_of_code], identifiers) do
+  if Map.has_key?(identifiers, value)  do
+    Logger.error(fn -> "Label redefinition" end)
+    :error
+  else
+    identifiers = Map.put_new(identifiers, value, nil)
+    save_all_identifiers(rest_of_code, identifiers)
+  end
+end
+def save_all_identifiers([_current_expr | rest_of_code], identifiers) do
+  save_all_identifiers(rest_of_code, identifiers)
+end
+
+defp operation_to_numbers_list([head | tail]) when is_atom(head) do
+  import OpcodesLookupTable
+  list = [head |> get_opcode |> get_opcode_number]
+  operation_to_numbers_list(tail, list)
+end
+defp operation_to_numbers_list([head | tail], list) when is_list(head) do
+  import AddressingModesLookupTable
+  [addressing_mode, _] = head
+  list = [addressing_mode |> get_addressing_mode_number | list]
+  operation_to_numbers_list(tail, list)
+end
+defp operation_to_numbers_list([], list) do
+  list
+    |> Enum.reverse
+    |> standardize_operation_numbers_list
+end
+
+defp create_opcode_number(list, base \\ 3) do
+  use Bitwise
+  list
+    |> Enum.reverse
+    |> Enum.with_index
+    |> Enum.map(fn ({item, i}) -> item <<< i*base end)
+    |> Enum.reverse
+    |> Enum.reduce(fn (x, acc) -> x ||| acc end)
+end
+
+defp get_args_value_list(args, values_list \\ [])
+defp get_args_value_list([], values_list) do
+  values_list
+end
+defp get_args_value_list([arg], _values_list) when is_atom(arg) do
+  arg
+end
+defp get_args_value_list([first | second], values_list) do
+  [_addr_mode | [value | _]] = first
+  values_list = values_list ++ [value]
+  get_args_value_list(second, values_list)
+end
+
+defp standardize_operation_numbers_list(list) when is_list(list)do
+  list ++ List.duplicate(0, 3-length(list))
+end
+
+defp valid_args_number?(operation) do
+  import OpcodesLookupTable
+  [opcode | _args] = operation
+  req_args_number = opcode |> get_opcode |> get_required_arguments_number
+  if req_args_number == length(operation)-1 do :ok
+  else {:error, :bad_args_number}
+  end
+end
+
+defp opcode_exists?(opcode) do
+  import OpcodesLookupTable
+  if get_opcode(opcode) == :error do
+    {:error, :opcode_doesnt_exist}
+  else :ok
+  end
 end
 
 end
