@@ -14,7 +14,7 @@ Value = (0|{Sign}?{NonZeroDigit}{Digit}*)
 Rules.
 
 {Whitespace}        : skip_token.
-{Terminator}        : {token, {'\n', TokenLine}}.
+{Terminator}        : skip_token.
 ,                   : {token, {',',  TokenLine}}.
 \&                  : {token, {'&',  TokenLine}}.
 \[                  : {token, {'[',  TokenLine}}.
