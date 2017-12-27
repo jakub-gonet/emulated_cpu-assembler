@@ -22,7 +22,7 @@ def assemble(code) when is_list(code) do
        {:ok, without_labels_def} <- remove_all_labels_def(assembled),
        {:ok, output} <- replace_all_labels(labels, without_labels_def)
     do
-      output
+      {:ok, output}
     else
       {:error, :label_non_existent, label} ->
         Logger.error(fn -> "Label #{label} doesn't exist" end)
@@ -40,6 +40,9 @@ def assemble(code) when is_list(code) do
         Logger.error(fn -> "First argument cannot be const value" end)
         {:error, :first_arg_const}
     end
+end
+def assemble(_) do
+  {:error, :wrong_arg_type}
 end
 
 defp assemble_operations(code, assembled_code \\ [])

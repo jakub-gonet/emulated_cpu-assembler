@@ -45,14 +45,14 @@ Returns required arguments number
 """
 def get_required_arguments_number({:ok, opcode_tuple}), do:
   opcode_tuple.required_args
-
+def get_required_arguments_number(_), do: {:error, :wrong_arg_type}
 @doc """
 Gets opcode number from given opcode
 
 Returns opcode number or
 """
-def get_opcode_number({:ok, opcode_tuple}) do
+def get_opcode_number({:ok, opcode_tuple}), do:
   opcode_tuple.number
-end
+def get_opcode_number(_), do: {:error, :wrong_arg_type}
 
 end

@@ -18,7 +18,7 @@ Function takes as argument a input file path, optionally output file path.
 
 Returns a tuple of '{input_file, output_file}' or ':help'.
 """
-def parse_args(argv) do
+def parse_args(argv) when is_list(argv) do
   parse = OptionParser.parse(argv, switches: [help: :boolean],
                                     aliases: [h:    :help   ])
 
@@ -32,6 +32,8 @@ def parse_args(argv) do
     _ ->:help
   end
 end
+def parse_args(_), do:
+  {:error, :wrong_arg_type}
 
 def parseCode(str) do
   Parser.parse(str)
