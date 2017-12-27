@@ -13,15 +13,15 @@ def assembly([], output) do
 end
 def assembly(code, output) do
   indentifiers = save_all_identifiers(code)
-  assembly_operations(code)
+  assemble_operations(code)
   replace_all_identifiers(code, indentifiers)
 end
 
-def assembly_operations(code, assembled_code \\ [])
-def assembly_operations([], assembled_code) do
+def assemble_operations(code, assembled_code \\ [])
+def assemble_operations([], assembled_code) do
   assembled_code
 end
-def assembly_operations([%{operation: current_operation} | rest_of_code], assembled_code) do
+def assemble_operations([%{operation: current_operation} | rest_of_code], assembled_code) do
   [opcode | args] = current_operation
   with :ok <- opcode_exists?(opcode),
        :ok <- valid_args_number?(current_operation),
@@ -30,14 +30,14 @@ def assembly_operations([%{operation: current_operation} | rest_of_code], assemb
                                    |> create_opcode_number,
        args_values = get_args_value_list(args)
     do
-      assembly_operations(rest_of_code, assembled_code ++ [opcode_addr_modes_number | args_values])
+      assemble_operations(rest_of_code, assembled_code ++ [opcode_addr_modes_number | args_values])
     else
       {:error, :bad_args_number} -> Logger.error(fn -> "Wrong arguments number for opcode #{opcode}" end)
       {:error, :opcode_doesnt_exist} -> Logger.error(fn -> "Opcode #{opcode} doesn't exist" end)
     end
 end
-def assembly_operations(rest_of_code, assembled_code) do
-  assembly_operations(rest_of_code, assembled_code)
+def assemble_operations(rest_of_code, assembled_code) do
+  assemble_operations(rest_of_code, assembled_code)
 end
 
 def replace_all_identifiers(code, indentifiers) do
