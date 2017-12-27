@@ -26,14 +26,15 @@ def assemble_operations([%{operation: current_operation} | rest_of_code], assemb
   with :ok <- opcode_exists?(opcode),
        :ok <- valid_args_number?(opcode, args),
        opcode_addr_modes_number = current_operation
-                                   |> operation_to_numbers_list
+                                   |> split_operation_into_numbers
                                    |> create_opcode_number,
-       args_values = get_args_value_list(args)
+       {:ok, args_values} <- get_args_values(args)
     do
       assemble_operations(rest_of_code, assembled_code ++ [opcode_addr_modes_number | args_values])
     else
       {:error, :bad_args_number} -> Logger.error(fn -> "Wrong arguments number for opcode #{opcode}" end)
       {:error, :opcode_doesnt_exist} -> Logger.error(fn -> "Opcode #{opcode} doesn't exist" end)
+      {:error, :first_arg_const} -> Logger.error(fn -> "First argument cannot be const value" end)
     end
 end
 def assemble_operations(rest_of_code, assembled_code) do
@@ -61,18 +62,18 @@ def save_all_identifiers([_current_expr | rest_of_code], identifiers) do
   save_all_identifiers(rest_of_code, identifiers)
 end
 
-defp operation_to_numbers_list([head | tail]) when is_atom(head) do
+defp split_operation_into_numbers([head | tail]) when is_atom(head) do
   import OpcodesLookupTable
   list = [head |> get_opcode |> get_opcode_number]
-  operation_to_numbers_list(tail, list)
+  split_operation_into_numbers(tail, list)
 end
-defp operation_to_numbers_list([head | tail], list) when is_list(head) do
+defp split_operation_into_numbers([head | tail], list) when is_list(head) do
   import AddressingModesLookupTable
   [addressing_mode, _] = head
   list = [addressing_mode |> get_addressing_mode_number | list]
-  operation_to_numbers_list(tail, list)
+  split_operation_into_numbers(tail, list)
 end
-defp operation_to_numbers_list([], list) do
+defp split_operation_into_numbers([], list) do
   list
     |> Enum.reverse
     |> standardize_operation_numbers_list
@@ -88,17 +89,20 @@ defp create_opcode_number(list, base \\ 3) do
     |> Enum.reduce(fn (x, acc) -> x ||| acc end)
 end
 
-defp get_args_value_list(args, values_list \\ [])
-defp get_args_value_list([], values_list) do
-  values_list
+defp get_args_values(args, values_list \\ [])
+defp get_args_values([], values_list) do
+  {:ok, values_list}
 end
-defp get_args_value_list([arg], _values_list) when is_atom(arg) do
+defp get_args_values([arg], _values_list) when is_atom(arg), do:
   arg
+defp get_args_values([[:CONST | [value]] | _second], [])
+when not is_atom(value) do
+  {:error, :first_arg_const}
 end
-defp get_args_value_list([first | second], values_list) do
-  [_addr_mode | [value | _]] = first
-  values_list = values_list ++ [value]
-  get_args_value_list(second, values_list)
+defp get_args_values([first | second], values_list) do
+      [_addr_mode | [value | _]] = first
+      values_list = values_list ++ [value]
+      get_args_values(second, values_list)
 end
 
 defp standardize_operation_numbers_list(list) when is_list(list)do
