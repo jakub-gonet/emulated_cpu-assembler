@@ -1,4 +1,4 @@
-defmodule OpcodesLookupTable do
+defmodule LookupTable.Opcodes do
 @moduledoc """
 Contains lookup table for opcodes and functions getting values from them
 """

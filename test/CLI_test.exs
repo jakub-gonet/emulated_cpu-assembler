@@ -1,6 +1,5 @@
 defmodule AssemblerCLITest do
   use ExUnit.Case
-
   import Assembler.CLI, only: [parse_args: 1]
 
   test ":help returned if passed -h or --help" do

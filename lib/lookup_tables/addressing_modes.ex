@@ -1,4 +1,4 @@
-defmodule AddressingModesLookupTable do
+defmodule LookupTable.AddressingModes do
 @moduledoc """
 Contains lookup table for addressing modes
 """
