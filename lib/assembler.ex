@@ -24,7 +24,7 @@ end
 def assemble_operations([%{operation: current_operation} | rest_of_code], assembled_code) do
   [opcode | args] = current_operation
   with :ok <- opcode_exists?(opcode),
-       :ok <- valid_args_number?(current_operation),
+       :ok <- valid_args_number?(opcode, args),
        opcode_addr_modes_number = current_operation
                                    |> operation_to_numbers_list
                                    |> create_opcode_number,
@@ -105,11 +105,10 @@ defp standardize_operation_numbers_list(list) when is_list(list)do
   list ++ List.duplicate(0, 3-length(list))
 end
 
-defp valid_args_number?(operation) do
+defp valid_args_number?(opcode, args) do
   import OpcodesLookupTable
-  [opcode | _args] = operation
   req_args_number = opcode |> get_opcode |> get_required_arguments_number
-  if req_args_number == length(operation)-1 do :ok
+  if req_args_number == length(args) do :ok
   else {:error, :bad_args_number}
   end
 end
