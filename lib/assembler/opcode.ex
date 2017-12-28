@@ -25,12 +25,10 @@ Assembler.Opcode is used to perform operations on operation' opcode.
       |> Enum.reverse
       |> standardize_operation_numbers_list
   end
-  def _split_operation_into_numbers(_, _), do:
-    {:error, :wrong_arg_type}
 
   @doc """
   Given list of opcode and arguments addressing mode numbers merges it into one number
-  by bitwise ORing it with given offset.
+  by bitwise ORing it with given offset. Note: list should be normalized.
 
   ## Example
   iex> Assembler.Opcode.create_opcode_number([1,2,1])
@@ -46,10 +44,6 @@ Assembler.Opcode is used to perform operations on operation' opcode.
       |> Enum.reverse
       |> Enum.reduce(fn (x, acc) -> x ||| acc end)
   end
-  def create_opcode_number(list, _) when is_list(list), do:
-    {:error, :bad_args_number}
-  def create_opcode_number(_, _), do:
-    {:error, :wrong_arg_type}
 
   defp standardize_operation_numbers_list(list) when is_list(list)do
     list ++ List.duplicate(0, 3-length(list))
