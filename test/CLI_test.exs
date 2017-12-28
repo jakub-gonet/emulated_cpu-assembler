@@ -19,8 +19,4 @@ test "parse_args/1 - passed input and output" do
     {"input.ecpu", "output.cecpu"}
 end
 
-test "parse_args/1 - passed wrong type" do
-  assert parse_args("hi") == {:error, :wrong_arg_type}
-end
-
 end
