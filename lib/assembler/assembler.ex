@@ -64,18 +64,13 @@ import Assembler.Labels
           Logger.error(fn -> "First argument cannot be const value" end)
       end
   end
-  def assemble(_) do
-    {:error, :wrong_arg_type}
-  end
 
   defp assemble_operations(code), do:
     _assemble_operations(code, [])
-  defp _assemble_operations([], assembled_code) do
+  defp _assemble_operations([], assembled_code), do:
     {:ok, assembled_code}
-  end
-  defp _assemble_operations([%{label: value} | rest_of_code], assembled_code) do
+  defp _assemble_operations([%{label: value} | rest_of_code], assembled_code), do:
     _assemble_operations(rest_of_code, assembled_code ++ [%{label: value}])
-  end
   defp _assemble_operations([%{operation: current_expr} | rest_of_code], assembled_code) do
     [opcode | args] = current_expr
     with :ok <- opcode_exists?(opcode),
@@ -88,9 +83,8 @@ import Assembler.Labels
         _assemble_operations(rest_of_code, assembled_code ++ [opcode_addr_modes_number | args_values])
     end
   end
-  defp _assemble_operations(rest_of_code, assembled_code) do
+  defp _assemble_operations(rest_of_code, assembled_code), do:
     _assemble_operations(rest_of_code, assembled_code)
-  end
 
   defp contains_HLT?([]), do:
     false

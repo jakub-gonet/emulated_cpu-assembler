@@ -36,9 +36,4 @@ test "assemble/1 - too little arguments in operation" do
   assert assemble(parsed_code) == {:error, :bad_args_number}
 end
 
-test "assemble/1 - passed wrong type" do
-  assert assemble("hello") == {:error, :wrong_arg_type}
-  assert assemble(:ohwell) == {:error, :wrong_arg_type}
-end
-
 end
