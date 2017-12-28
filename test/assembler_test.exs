@@ -19,13 +19,12 @@ end
 
 test "assemble/1 - label without reference in code" do
   parsed_code = [%{operation: [:JMP, [:CONST, :error]]}]
-
-  assert {:error, :label_non_existent, _} = assemble(parsed_code)
+  assert assemble(parsed_code) == {:error, :label_non_existent, :error}
 end
 
 test "assemble/1 - multiple label definition" do
   parsed_code = [%{label: :hi}, %{label: :hi}]
-  assert {:error, :redefined_label, _} = assemble(parsed_code)
+  assert assemble(parsed_code) == {:error, :redefined_label, :hi}
 end
 
 test "assemble/1 - too little arguments in operation" do
