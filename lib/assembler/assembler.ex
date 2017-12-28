@@ -7,6 +7,7 @@ import Assembler.Labels
   Assembler is used to assembly .ecpu files into compiled form for
   Emulated CPU.
 """
+
   @doc """
   Given the parsed code, assembles it and returns list.
   Warns when code not contain HLT opcode or is empty and logs errors when passed wrong code.
@@ -40,7 +41,7 @@ import Assembler.Labels
       []
   end
   def assemble(code) when is_list(code) do
-    if contains_HLT?(code) do
+    if not contains_HLT?(code) do
       Logger.warn(fn -> "Code doesn't contain HLT opcode" end)
     end
 
@@ -97,9 +98,9 @@ import Assembler.Labels
   end
 
   defp contains_HLT?([]), do:
-    {:warning, :isnt_halted}
+    false
   defp contains_HLT?([%{operation: [:HLT | _]} | _rest_of_code]), do:
-    :ok
+    true
   defp contains_HLT?([_current_expr | rest_of_code]), do:
     contains_HLT?(rest_of_code)
 
