@@ -60,8 +60,8 @@ import Assembler.Labels
           Logger.error(fn -> "Wrong arguments number for opcode #{opcode}" end)
         {:error, :opcode_doesnt_exist, opcode} ->
           Logger.error(fn -> "Opcode #{opcode} doesn't exist" end)
-        {:error, :first_arg_const} ->
-          Logger.error(fn -> "First argument cannot be const value" end)
+        {:error, :first_arg_const, value} ->
+          Logger.error(fn -> "First argument value (#{value}) cannot be const" end)
       end
   end
 
