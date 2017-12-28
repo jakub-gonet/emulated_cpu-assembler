@@ -4,22 +4,16 @@ Parser is used to parse and tokenize given string to proper form used by app.
 """
 
   @doc """
-  Given string parses it to form required by functions in other modules.
+  Given tokenized form parses it to form required by functions in other modules.
   """
-  def parse(str) do
-    {:ok, list} = str
-                  |> tokenize()
-                  |> :assembler_parser.parse()
-    list
-  end
+  def parse(tokenized), do: :assembler_parser.parse(tokenized)
 
   @doc """
-  Given string tokenizes it, should be used only for debug reasons.
+  Given string, returns tokenized version
   """
   def tokenize(str) do
-    {:ok, tokens, _} = str
-                        |> to_charlist()
-                        |> :assembler_lexer.string()
-    tokens
+    str
+      |> to_charlist
+      |> :assembler_lexer.string
   end
 end
