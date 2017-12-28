@@ -3,7 +3,8 @@ defmodule Assembler.LabelsTest do
   import Assembler.Labels
 
 test "replace_all_labels/2" do
-  assert replace_all_labels(%{hi: 12}, [2,3,:hi]) == {:ok, [2,3,12]}
+  assert replace_all_labels(%{hi: 12}, [2, 3, :hi]) == {:ok, [2, 3, 12]}
+  assert replace_all_labels(%{hi: 12}, [2, 3, :hi, :hi]) == {:ok, [2, 3, 12, 12]}
   assert replace_all_labels(%{hi: 12}, []) == {:ok, []}
 end
 

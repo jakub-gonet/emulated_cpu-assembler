@@ -1,5 +1,17 @@
 defmodule Assembler.Arguments do
+@moduledoc """
+Assembler.Arguments is used to manipulate arguments of a single operation.
+"""
 
+  @doc """
+  Given the arguments list, where each argument is [:addr_mode, value] list
+  returns values in list. Returns empty list when passed no arguments.
+
+  ## Example
+  iex> args_list = [[:REGISTER, 1], [:REGISTER, 2]]
+  iex> Assembler.Arguments.get_args_values(args_list)
+  {:ok, [1, 2]}
+  """
   def get_args_values(args), do:
     _get_args_values(args, [])
   defp _get_args_values([], values_list), do: {:ok, values_list}

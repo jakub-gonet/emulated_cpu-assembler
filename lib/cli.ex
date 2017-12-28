@@ -35,8 +35,4 @@ end
 def parse_args(_), do:
   {:error, :wrong_arg_type}
 
-def parseCode(str) do
-  Parser.parse(str)
-end
-
 end
