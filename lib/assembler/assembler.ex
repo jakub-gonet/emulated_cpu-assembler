@@ -54,19 +54,14 @@ import Assembler.Labels
       else
         {:error, :label_non_existent, label} ->
           Logger.error(fn -> "Label #{label} doesn't exist" end)
-          {:error, :label_non_existent, label}
         {:error, :redefined_label, label} ->
           Logger.error(fn -> "Label #{label} redefinition" end)
-          {:error, :redefined_label, label}
         {:error, :bad_args_number, opcode} ->
           Logger.error(fn -> "Wrong arguments number for opcode #{opcode}" end)
-          {:error, :bad_args_number}
         {:error, :opcode_doesnt_exist, opcode} ->
           Logger.error(fn -> "Opcode #{opcode} doesn't exist" end)
-          {:error, :opcode_doesnt_exist}
         {:error, :first_arg_const} ->
           Logger.error(fn -> "First argument cannot be const value" end)
-          {:error, :first_arg_const}
       end
   end
   def assemble(_) do
