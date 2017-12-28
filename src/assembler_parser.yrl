@@ -36,7 +36,7 @@ identifer -> atom      : unwrap('$1').
 operation -> opcode value ',' value : ['$1', '$2', '$4'].
 operation -> opcode value           : ['$1', '$2'].
 operation -> opcode                 : ['$1'].
-operation -> opcode atom       : ['$1', ['CONST',unwrap('$2')]].
+operation -> opcode atom       : ['$1', ['CONST', unwrap('$2')]].
 
 opcode -> atom : unwrap('$1').
 
