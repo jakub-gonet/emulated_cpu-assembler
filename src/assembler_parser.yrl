@@ -1,54 +1,35 @@
 Nonterminals
-  statements
-  statement
-  operation
-  identifer
-  opcode
-  label
-  value
-  regValue
-  address
-  regAddress.
+code statement operation value.
 
 Terminals
-  int
-  atom
-  string
-  '['
-  ']'
-  ','
-  ':'
-  '&'.
+label identifer integer ',' opcode register address address_in_register.
 
-Rootsymbol statements.
+Rootsymbol code.
 
-statements -> statement                 : ['$1'].
-statements -> statement statements      : ['$1' | '$2'].
+code -> statement      : ['$1'].
+code -> statement code : ['$1' | '$2'].
 
-statement -> label     : #{'label' => '$1'}.
+statement -> label     : #{'label' => label('$1')}.
 statement -> operation : #{'operation' => '$1'}.
 
-%%% label %%%
-label -> identifer ':' : '$1'.
-identifer -> string    : unwrap_string('$1').
+operation -> opcode value ',' value : [operation('$1'), '$2', '$4'].
+operation -> opcode value           : [operation('$1'), '$2'].
+operation -> opcode identifer       : [operation('$1'), value('$2')].
+operation -> opcode                 : [operation('$1')].
 
-%%% operation %%%
-operation -> opcode value ',' value : ['$1', '$2', '$4'].
-operation -> opcode value           : ['$1', '$2'].
-operation -> opcode identifer       : ['$1', ['CONST', '$2']].
-operation -> opcode                 : ['$1'].
-
-opcode -> atom : unwrap('$1').
-
-value -> int        : ['CONST', unwrap('$1')].
-value -> regValue   : '$1'.
-value -> address    : '$1'.
-value -> regAddress : '$1'.
-
-regValue ->   '[' int ']'       : ['REGISTER', unwrap('$2')].
-address ->    '&' int           : ['ADDRESS', unwrap('$2')].
-regAddress -> '&' '[' int ']'   : ['ADDRESS_IN_REGISTER', unwrap('$3')].
+value -> integer  : value('$1').
+value -> register : value('$1').
+value -> address  : value('$1').
+value -> address_in_register : value('$1').
 
 Erlang code.
-unwrap_string({_Token, _Line, Value}) -> list_to_atom(Value).
-unwrap({_Token, _Line, Value}) -> Value.
+
+operation({opcode, _, OpcodeName})     -> OpcodeName.
+
+label({label, _, Value})               -> Value.
+
+value({identifer, _, Value})           -> ['CONST', Value];
+value({integer, _, Value})             -> ['CONST', Value];
+value({register, _, Value})            -> ['REGISTER', Value];
+value({address, _, Value})             -> ['ADDRESS', Value];
+value({address_in_register, _, Value}) -> ['ADDRESS_IN_REGISTER', Value].
