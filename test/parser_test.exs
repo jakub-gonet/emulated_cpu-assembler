@@ -3,9 +3,7 @@ defmodule AssemblerParserTest do
   import Parser, only: [parse: 1]
 
 test "parse/1" do
-  tokenized = [{:atom, 1, :loop}, {:":", 1}, {:atom, 2, :MOV}, {:"[", 2}, {:int, 2, 2},
-  {:"]", 2}, {:",", 2}, {:"[", 2}, {:int, 2, 1}, {:"]", 2}, {:atom, 3, :JMP},
-  {:atom, 3, :loop}]
+  {:ok, tokenized, _} = Parser.tokenize("loop:\nMOV [2], [1]\nJMP loop")
 
   expected = {:ok, [%{label: :loop},
               %{operation: [:MOV, [:REGISTER, 2], [:REGISTER, 1]]},
@@ -15,43 +13,39 @@ test "parse/1" do
   assert parse(tokenized) == expected
 end
 test "parse/1 - parenthesis doesn't match" do
-  tokenized = [{:atom, 1, :MOV}, {:"[", 1}, {:int, 1, 13}, {:",", 1}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV [1, 8")
   assert {:error, _} = parse(tokenized)
 
-  tokenized = [{:atom, 1, :MOV}, {:int, 1, 13}, {:"[", 1},  {:",", 1}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV 13], 8")
   assert {:error, _} = parse(tokenized)
 end
 
 test "parse/1 - too much arguments" do
-  tokenized = [{:atom, 1, :MOV}, {:"[", 1}, {:int, 1, 13}, {:"]", 1}, {:",", 1},
-  {:int, 1, 8}, {:",", 1}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV [13], 8, 4")
   assert {:error, _} = parse(tokenized)
 
-  tokenized = [{:atom, 1, :MOV}, {:"[", 1}, {:int, 1, 13}, {:"]", 1}, {:",", 1},
-  {:int, 1, 8}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV [13], 8 4")
   assert {:error, _} = parse(tokenized)
 end
 
 test "parse/1 - comma is missing" do
-  tokenized = [{:atom, 1, :MOV}, {:"[", 1}, {:int, 1, 13}, {:"]", 1}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV [13] 4")
   assert {:error, _} = parse(tokenized)
 end
 
 test "parse/1 - number / label isn't used as value" do
-  tokenized = [{:atom, 1, :MOV}, {:"[", 1}, {:atom, 1, :k}, {:"]", 1}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV [k], 8")
   assert {:error, _} = parse(tokenized)
 
-  tokenized = [{:atom, 1, :MOV}, {:atom, 1, :test}, {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV test:, 8")
   assert {:error, _} = parse(tokenized)
 
-  tokenized = [{:atom, 1, :MOV}, {:"[", 1}, {:":", 1}, {:atom, 1, :hello}, {:"]", 1},
-  {:int, 1, 8}]
+  {:ok, tokenized, _} = Parser.tokenize("MOV hello, 8")
   assert {:error, _} = parse(tokenized)
 end
 
 test "wrong symbol is used" do
-  tokenized =  [{:atom, 1, :MOV}, {:atom, 1, :"$"}, {:"[", 1}, {:int, 1, 2}, {:"]", 1},
-  {:",", 1}, {:int, 1, 8}]
+    {:ok, tokenized, _} = Parser.tokenize("MOV $[2], 8")
   assert {:error, _} = parse(tokenized)
 end
 

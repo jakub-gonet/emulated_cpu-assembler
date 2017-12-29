@@ -13,7 +13,7 @@ Nonterminals
 Terminals
   int
   atom
-  '\n'
+  string
   '['
   ']'
   ','
@@ -30,13 +30,13 @@ statement -> operation : #{'operation' => '$1'}.
 
 %%% label %%%
 label -> identifer ':' : '$1'.
-identifer -> atom      : unwrap('$1').
+identifer -> string    : unwrap_string('$1').
 
 %%% operation %%%
 operation -> opcode value ',' value : ['$1', '$2', '$4'].
 operation -> opcode value           : ['$1', '$2'].
+operation -> opcode identifer       : ['$1', ['CONST', '$2']].
 operation -> opcode                 : ['$1'].
-operation -> opcode atom       : ['$1', ['CONST', unwrap('$2')]].
 
 opcode -> atom : unwrap('$1').
 
@@ -50,4 +50,5 @@ address ->    '&' int           : ['ADDRESS', unwrap('$2')].
 regAddress -> '&' '[' int ']'   : ['ADDRESS_IN_REGISTER', unwrap('$3')].
 
 Erlang code.
+unwrap_string({_Token, _Line, Value}) -> list_to_atom(Value).
 unwrap({_Token, _Line, Value}) -> Value.
