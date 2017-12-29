@@ -1,21 +1,19 @@
 # Assembler
 
-**TODO: Add description**
+This is an assembler used for Emulated CPU project, written in Elixir.
+
+## Usage
+
+To compile programs just call `assembler <file_to_be_assembled.ecpu> <output_file.cecpu>` or just `assembler <file_to_be_assembled.ecpu>`
+
+File extensions are important.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `assembler` to your list of dependencies in `mix.exs`:
+Firstly, check if Elixir is installed:
+  `elixir -v`
 
-```elixir
-def deps do
-  [
-    {:assembler, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/assembler](https://hexdocs.pm/assembler).
-
+Then, go to root of project and run
+  `mix escript.build`
+ 
+At this point assembler should be usable.
