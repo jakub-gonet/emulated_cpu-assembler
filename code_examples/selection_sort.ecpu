@@ -1,0 +1,55 @@
+###################
+#   Bubble sort   #
+###################
+
+# overwrite first 5 numbers in code and store values of an array there (indexes 0 -> 4)
+MOV &0, 5
+MOV &1, 3
+MOV &2, 7
+MOV &3, 9
+MOV &4, 1
+
+# store copy of the array next to it (indexes 5 -> 9)
+MOV &5, &0
+MOV &6, &1
+MOV &7, &2
+MOV &8, &3
+MOV &9, &4
+
+MOV [1], 5 # address of first value in the array
+MOV [2], 5 # size of the array
+
+# calculate last index
+MOV [3], [1]
+ADD [3], [2] # [3] <- [1] + [2]
+
+#####
+MOV [4], [1] # first loop index -> i = t[0]
+main_loop:
+
+MOV [5], [1]
+MOV [6], [5]  # second loop index j-1
+INC [5]       # second loop index j
+###
+inner_loop:
+CMP &[6], &[5]
+JG swap
+swapped:
+
+INC [5]
+INC [6]
+CMP [5], [3]
+JL inner_loop # loop while j < size of the array
+###
+
+INC [4]
+CMP [4], [3]
+JL main_loop # loop while i < size of the array
+#####
+HLT
+
+swap:
+  MOV [7], &[6]    # save old j-1 value
+  MOV &[6], &[5]   # swap j-1 with j
+  MOV &[5], [7]    # swap j with old j-1
+JMP swapped
