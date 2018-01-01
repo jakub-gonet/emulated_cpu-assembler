@@ -2,6 +2,10 @@
 #   Bubble sort   #
 ###################
 
+NOP NOP NOP NOP NOP
+
+NOP NOP NOP NOP NOP
+
 # overwrite first 5 numbers in code and store values of an array there (indexes 0 -> 4)
 MOV &0, 5
 MOV &1, 3
