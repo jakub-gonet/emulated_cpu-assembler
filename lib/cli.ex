@@ -36,7 +36,14 @@ def parse_args(argv) when is_list(argv) do
 end
 
 defp compile({:error, :no_extension}), do:
-    Logger.error("File with .ecpu extension is required")
+  Logger.error("File with .ecpu extension is required")
+defp compile(:help), do:
+  IO.puts """
+          Usage: assembler <input file> [output file]
+          Providing output file is optional.
+
+          Use -h (--help) switch to get this help.
+          """
 defp compile({input}), do:
   input |> createOutputFileName |> compile
 defp compile({input, output}) do
