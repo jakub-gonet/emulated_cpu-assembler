@@ -53,21 +53,21 @@ Assembler.Opcode is used to perform operations on operation' opcode.
   Given opcode and arguments returns :ok if number of arguments matches opcode's
   required arguments number, {:error, :bad_args_number, opcode_name} otherwise.
   """
-  def valid_args_number?(opcode, args) do
+  def valid_args_number?(opcode, args, line_num) do
     import LookupTable.Opcodes
     req_args_number = opcode |> get_opcode |> get_required_arguments_number
     if req_args_number == length(args) do :ok
-    else {:error, :bad_args_number, opcode}
+    else {:error, :bad_args_number, opcode, line_num}
     end
   end
 
   @doc """
   Checks if given opcode exists.
   """
-  def opcode_exists?(opcode) do
+  def opcode_exists?(opcode, line_num) do
     import LookupTable.Opcodes
     if get_opcode(opcode) == :error do
-      {:error, :opcode_doesnt_exist, opcode}
+      {:error, :opcode_doesnt_exist, opcode, line_num}
     else :ok
     end
   end

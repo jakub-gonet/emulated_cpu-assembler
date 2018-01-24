@@ -45,9 +45,9 @@ Assembler.Labels is used to handle any operation connected with labels.
     _save_all_labels(code, %{}, 0)
   defp _save_all_labels([], labels, _expr_number), do:
     {:ok, labels}
-  defp _save_all_labels([%{label: label} | rest_of_code], labels, expr_number) do
+  defp _save_all_labels([%{label: {line_num, label}} | rest_of_code], labels, expr_number) do
     if Map.has_key?(labels, label)  do
-      {:error, :redefined_label, label}
+      {:error, :redefined_label, label, line_num}
     else
       labels = Map.put_new(labels, label, expr_number)
       _save_all_labels(rest_of_code, labels, expr_number)
