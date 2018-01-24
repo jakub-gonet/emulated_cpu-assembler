@@ -11,13 +11,13 @@ code -> statement code : ['$1' | '$2'].
 %code -> statement      : ['$1'].
 %code -> statement code : ['$1' | '$2'].
 
-statement -> label     : #{'label' => label('$1')}.
+statement -> label     : #{'label' => {get_line('$1'), label('$1')}}.
 statement -> operation : #{'operation' => '$1'}.
 
-operation -> opcode value ',' value : [get_line('$1'), operation('$1'), '$2', '$4'].
-operation -> opcode value           : [get_line('$1'), operation('$1'), '$2'].
-operation -> opcode identifer       : [get_line('$1'), operation('$1'), value('$2')].
-operation -> opcode                 : [get_line('$1'), operation('$1')].
+operation -> opcode value ',' value : {get_line('$1'), [operation('$1'), '$2', '$4']}.
+operation -> opcode value           : {get_line('$1'), [operation('$1'), '$2']}.
+operation -> opcode identifer       : {get_line('$1'), [operation('$1'), value('$2')]}.
+operation -> opcode                 : {get_line('$1'), [operation('$1')]}.
 
 value -> integer  : value('$1').
 value -> register : value('$1').
