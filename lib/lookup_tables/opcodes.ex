@@ -16,19 +16,20 @@ Contains lookup table for opcodes and functions getting values from them
   JGE:    %{number: 9,  required_args: 1},
   PUSH:   %{number: 10,  required_args: 1},
   POP:    %{number: 11,  required_args: 1},
-  INC:    %{number: 12, required_args: 1},
-  DEC:    %{number: 13, required_args: 1},
-  ADD:    %{number: 14, required_args: 2},
-  SUB:    %{number: 15, required_args: 2},
-  MUL:    %{number: 16, required_args: 2},
-  DIV:    %{number: 17, required_args: 2},
-  AND:    %{number: 18, required_args: 2},
-  OR:     %{number: 19, required_args: 2},
-  XOR:    %{number: 20, required_args: 2},
-  NOT:    %{number: 21, required_args: 1},
-  RSHFT:  %{number: 22, required_args: 2},
-  LSHFT:  %{number: 23, required_args: 2},
-  CMP:    %{number: 24, required_args: 2}
+  CALL:   %{number: 12,  required_args: 1},
+  INC:    %{number: 13, required_args: 1},
+  DEC:    %{number: 14, required_args: 1},
+  ADD:    %{number: 15, required_args: 2},
+  SUB:    %{number: 16, required_args: 2},
+  MUL:    %{number: 17, required_args: 2},
+  DIV:    %{number: 18, required_args: 2},
+  AND:    %{number: 19, required_args: 2},
+  OR:     %{number: 20, required_args: 2},
+  XOR:    %{number: 21, required_args: 2},
+  NOT:    %{number: 22, required_args: 1},
+  RSHFT:  %{number: 23, required_args: 2},
+  LSHFT:  %{number: 24, required_args: 2},
+  CMP:    %{number: 25, required_args: 2}
 }
 
 @doc """
