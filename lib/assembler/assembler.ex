@@ -78,7 +78,7 @@ import Assembler.Labels
          opcode_addr_modes_number = current_expr
                                      |> split_operation_into_numbers
                                      |> create_opcode_number,
-         {:ok, args_values} <- get_args_values(args, line_num)
+         {:ok, args_values} <- get_args_values(opcode, args, line_num)
       do
         _assemble_operations(rest_of_code, assembled_code ++ [opcode_addr_modes_number | args_values])
     end
